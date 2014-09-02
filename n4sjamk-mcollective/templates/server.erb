@@ -1,0 +1,38 @@
+main_collective = mcollective
+collectives = mcollective
+libdir = /usr/share/mcollective/plugins
+logfile = /var/log/mcollective.log
+loglevel = info
+keeplogs = 5
+max_log_size = 2097152
+daemonize = 1
+
+# Plugins
+plugin.psk = unset
+
+connector = activemq
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = <%= @activemq_url %>
+plugin.activemq.pool.1.port = <%= @activemq_port %>
+plugin.activemq.pool.1.user = <%= @activemq_user %>
+plugin.activemq.pool.1.password = <%= @activemq_password %>
+
+plugin.activemq.pool.1.ssl = 1
+plugin.activemq.pool.1.ssl.ca = <%= @ssl_ca_file %>
+plugin.activemq.pool.1.ssl.cert = <%= @_ssl_cert_file %>
+plugin.activemq.pool.1.ssl.key = <%= @_ssl_key_file %>
+plugin.activemq.pool.1.ssl.fallback = 0
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
+
+# Facts
+factsource = yaml
+plugin.yaml = /etc/mcollective/facts.yaml
+
+# Registration (recommended):
+# -----------------------
+registerinterval = 600
+registration = agentlist
+registration_collective = mcollective

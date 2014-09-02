@@ -1,0 +1,16 @@
+{
+  "name": "n4sjamk-teamboard_client",
+  "version": "2.0.0",
+  "author": "n4sjamk",
+  "summary": "teamboard frontend",
+  "license": "Apache 2.0",
+  "source": "https://github.com/N4SJAMK/teamboard-client",
+  "project_page": "https://github.com/N4SJAMK/teamboard-client",
+  "issues_url": "",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib","version_requirement": ">= 4.3.2"
+    }
+  ]
+}
+

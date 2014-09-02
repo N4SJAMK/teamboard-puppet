@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/teamboard-io
+# chkconfig: 2345 55 25
+# description: teamboard-io daemon
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source environment variables
+. /etc/default/teamboard-io
+
+# Soruce defaults
+. /etc/default/teamboard-io
+
+WORKDIR="/home/teamboard/io/teamboard-io"
+OUTFILE=$WORKDIR/teamboard-io-out.log
+LOGFILE=$WORKDIR/teamboard-io-log.log
+ERRFILE=$WORKDIR/teamboard-io-err.log
+PIDFILE=$WORKDIR/teamboard-pid
+
+export PATH=/usr/local/bin:$PATH
+
+start() {
+
+	if [ -f $PIDFILE ]; then
+		kill -0 $(<$PIDFILE) > /dev/null 2>&1
+		if [ $? == 0 ]; then
+			echo "already running: "
+			return
+		fi
+	fi
+
+	echo "Starting teamboard-io: "
+
+	NODE_ENV=${node_env} \
+	API_HOST=${api_host} \
+	API_URL=${api_url} \
+	API_PORT=${api_port} \
+	REDIS_HOST=${redis_host} \
+	REDIS_PORT=${redis_port} \
+	PORT=${port} \
+	daemon --user teamboard "forever start -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+}
+
+stop() {
+        echo "Shutting down teamboard-io: "
+        daemon --user teamboard "forever stop -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: <servicename> {start|stop|status|reload|restart[|probe]"
+        exit 1
+        ;;
+esac
+exit $?

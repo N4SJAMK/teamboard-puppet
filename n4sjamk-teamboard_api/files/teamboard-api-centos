@@ -1,0 +1,89 @@
+#!/bin/bash
+# chkconfig: 2345 55 25
+# description: teamboard-api daemon
+#
+#       /etc/rc.d/init.d/teamboard-api
+#
+#       <description of the *service*>
+#       <any general comments about this init script>
+#
+# <tags -- see below for tag definitions.  *Every line* from the top
+#  of the file to the end of the tags section must begin with a #
+#  character.  After the tags section, there should be a blank line.
+#  This keeps normal comments in the rest of the file from being
+#  mistaken for tags, should they happen to fit the pattern.>
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source environment variables
+. /etc/default/teamboard-api
+
+WORKDIR="/home/teamboard/api/teamboard-api"
+OUTFILE=$WORKDIR/teamboard-api-out.log
+LOGFILE=$WORKDIR/teamboard-api-log.log
+ERRFILE=$WORKDIR/teamboard-api-err.log
+PIDFILE=$WORKDIR/teamboard-api.pid
+
+export PATH=/usr/local/bin:$PATH
+
+
+start() {
+
+
+	if [ -f $PIDFILE ]; then
+		PID=$(<$PIDFILE)
+	fi
+
+	kill -0 $PID
+
+	if [ $? == 0 ]; then
+		echo -n "already running: "
+		return
+	fi
+
+        echo -n "Starting teamboard-api: "
+	daemon --user teamboard "NODE_ENV=$NODE_ENV \
+				MONGODB_URL=$MONGODB_URL \
+				MONGODB_PORT=$MONGODB_PORT \
+				REDIS_HOST=$REDIS_HOST \
+				REDIS_PORT=$REDIS_PORT \
+				TOKEN_SECRET=$TOKEN_SECRET \
+				PORT=$PORT \
+				STATIC_URL=$STATIC_URL \
+				STATIC_PORT=$STATIC_PORT \
+				forever start -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+}
+
+stop() {
+        echo -n "Shutting down teamboard-api: "
+	daemon --user teamboard "NODE_ENV=$NODE_ENV \
+				MONGODB_URL=$MONGODB_URL \
+				MONGODB_PORT=$MONGODB_PORT \
+				REDIS_HOST=$REDIS_HOST \
+				REDIS_PORT=$REDIS_PORT \
+				TOKEN_SECRET=$TOKEN_SECRET \
+				PORT=$PORT \
+				STATIC_URL=$STATIC_URL \
+				STATIC_PORT=$STATIC_PORT \
+				forever stop -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: <servicename> {start|stop|status|reload|restart[|probe]"
+        exit 1
+        ;;
+esac
+exit $?

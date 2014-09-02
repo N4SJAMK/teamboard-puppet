@@ -1,0 +1,17 @@
+{
+  "name": "n4sjamk-teamboard_img",
+  "version": "1.0.0",
+  "author": "n4sjamk",
+  "summary": "teamboard img",
+  "license": "Apache 2.0",
+  "source": "https://github.com/N4SJAMK/teamboard-img",
+  "project_page": "https://github.com/N4SJAMK/teamboard-img",
+  "issues_url": "",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}
+

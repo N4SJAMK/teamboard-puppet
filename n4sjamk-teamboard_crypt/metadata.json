@@ -1,0 +1,16 @@
+{
+  "name": "n4sjamk-teamboard_crypt",
+  "version": "1.0.0",
+  "author": "n4sjamk",
+  "summary": "teamboard crypt",
+  "license": "Apache 2.0",
+  "source": "https://github.com/N4SJAMK/teamboard-crypt",
+  "project_page": "https://github.com/N4SJAMK/teamboard-crypt",
+  "issues_url": "",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib","version_requirement": ">= 4.3.2"
+    }
+  ]
+}
+

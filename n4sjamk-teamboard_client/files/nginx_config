@@ -1,0 +1,12 @@
+server {
+        listen 80 default_server;
+
+        root /home/teamboard/client/teamboard/dist;
+        index index.html;
+
+        server_name localhost;
+
+        location / {
+                try_files $uri /index.html;
+        }
+}

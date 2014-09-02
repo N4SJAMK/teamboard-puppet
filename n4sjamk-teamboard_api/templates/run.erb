@@ -1,0 +1,15 @@
+!#/bin/bash
+
+export NODE_ENV=<%= @node_env %>
+export MONGODB_URL=<%= @mongodb_url %>
+export MONGODB_PORT=<%= @mongodb_port %>
+export REDIS_HOST=<%= @redis_host %>
+export REDIS_PORT=<%= @redis_port %>
+export TOKEN_SECRET=<%= @token_secret %>
+export PORT=<%= @port %>
+export STATIC_URL=<%= @static_url %>
+export STATIC_PORT=<%= @static_port %>
+export CRYPTO_URL=<%= @crypto_url %>
+export CRYPTO_PORT=<%= @crypto_port %>
+
+node index.js

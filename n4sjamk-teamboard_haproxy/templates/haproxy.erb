@@ -1,0 +1,75 @@
+global
+    maxconn 4096 # Total Max Connections. This is dependent on ulimit
+    nbproc 1
+
+defaults
+    mode http
+    fullconn 4096
+    maxconn 2048
+    timeout queue 600s
+    timeout connect 5s
+    timeout client 600s
+    timeout server 600s
+
+frontend all 0.0.0.0:80
+    timeout client 86400000
+    acl is_api hdr_dom(host) <%= @teamboard_api %>
+    acl is_ws hdr_end(host) <%= @teamboard_io %>
+    acl is_api hdr_dom(host) <%= @teamboard_api_lan %>
+    acl is_ws hdr_end(host) <%= @teamboard_io_lan %>
+    acl is_crypt hdr_dom(host) <%= @teamboard_crypt %>
+    acl is_crypt hdr_dom(host) <%= @teamboard_crypt_lan %>
+    
+    use_backend API if is_api
+    use_backend WS if is_ws
+    use_backend CRYPT if is_crypt
+    default_backend www_stats
+
+frontend stats 0.0.0.0:1963
+    default_backend www_stats
+
+backend www_stats
+    mode http
+    stats enable
+    #stats uri /haproxy?stats
+    stats uri /
+    stats realm Strictly\ Private
+    stats auth <%= @stats_user %>:<%= @stats_password %>
+    balance roundrobin
+    option httpclose
+    option forwardfor
+
+backend API
+
+balance leastconn
+   # option forwardfor # This sets X-Forwarded-For
+    timeout server 30000
+    timeout connect 4000
+    <%- @i = 1 -%>
+    <% @api_hosts.each do |host| %>
+    server API<%= @i -%> <%= host %> weight 1 maxconn 2048 check<%- @i = @i + 1 -%>
+    <% end %>
+
+
+backend WS
+
+balance roundrobin
+    #option forwardfor # This sets X-Forwarded-For
+    timeout server 30000
+    timeout connect 4000
+    <%- @i = 1 -%>
+    <% @ws_hosts.each do |host| %>
+    server WebSocket<%= @i %> <%= host %> weight 1 maxconn 2048 check<%- @i = @i + 1 -%>
+    <% end %>
+
+backend CRYPT
+
+balance roundrobin
+    #option forwardfor # This sets X-Forwarded-For
+    timeout server 30000
+    timeout connect 4000
+    <%- @i = 1 -%>
+    <% @crypt_hosts.each do |host| %>
+    server Crypt<%= @i %> <%= host %> weight 1 maxconn 2048 check<%- @i = @i + 1 -%>
+    <% end %>
+

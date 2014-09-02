@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/teamboard-img
+# chkconfig: 2345 55 25
+# description: teamboard-img daemon
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source environment variables
+. /etc/default/teamboard-img
+
+# Soruce defaults
+. /etc/default/teamboard-img
+
+WORKDIR="/home/teamboard/img/teamboard-img"
+OUTFILE=$WORKDIR/teamboard-img-out.log
+LOGFILE=$WORKDIR/teamboard-img-log.log
+ERRFILE=$WORKDIR/teamboard-img-err.log
+PIDFILE=$WORKDIR/teamboard-pid
+
+export PATH=/usr/local/bin:$PATH
+
+start() {
+
+	if [ -f $PIDFILE ]; then
+		kill -0 $(<$PIDFILE) > /dev/null 2>&1
+		if [ $? == 0 ]; then
+			echo "already running: "
+			return
+		fi
+	fi
+
+	echo "Starting teamboard-img: "
+
+	MONGODB_URL=$MONGODB_URL \
+	PORT=$PORT \
+	CLEANUP_INTERVAL=$CLEANUP_INTERVAL \
+	CLEANUP_TRESHOLD=$CLEANUP_TRESHOLD \
+	daemon --user teamboard "cd $WORKDIR && forever start -p $WORKDIR -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+}
+
+stop() {
+        echo "Shutting down teamboard-img: "
+        daemon --user teamboard "forever stop -a -o $OUTFILE -l $LOGFILE -e $ERRFILE --pidFile $PIDFILE $WORKDIR/index.js"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: <servicename> {start|stop|status|reload|restart[|probe]"
+        exit 1
+        ;;
+esac
+exit $?

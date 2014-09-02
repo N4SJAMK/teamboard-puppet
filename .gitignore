@@ -1,0 +1,12 @@
+n4sjamk-teamboard_client/pkg/*
+n4sjamk-teamboard_api/pkg/*
+n4sjamk-teamboard_common/pkg/*
+n4sjamk-teamboard_mongodb/pkg/*
+n4sjamk-teamboard_io/pkg/*
+n4sjamk-teamboard_redis/pkg/*
+n4sjamk-teamboard_haproxy/pkg/*
+n4sjamk-teamboard_img/pkg/*
+n4sjamk-teamboard_crypt/pkg/*
+n4sjamk-mcollective/pkg/*
+n4sjamk-puppet_agent/pkg/*
+*.swp

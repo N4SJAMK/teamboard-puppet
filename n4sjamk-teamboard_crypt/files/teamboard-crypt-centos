@@ -1,0 +1,134 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          teamboard-crypt
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: teamboard-crypt
+# Description:       This file should be used to construct scripts to be
+#                    placed in /etc/init.d.
+### END INIT INFO
+
+# Author: Foo Bar <foobar@baz.org>
+#
+# Please remove the "Author" lines above and replace them
+# with your own name if you copy and modify this script.
+
+# Do NOT "set -e"
+
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Teamboard crypt service"
+NAME=teamboard-crypt
+INSTALLATION_FOLDER="/home/teamboard/crypt"
+DAEMON="/home/teamboard/crypt/bin/teamboard-crypt"
+DAEMON_ARGS=""
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+export PATH="/usr/local/sbin:$PATH"
+
+# Source function library.
+. /etc/init.d/functions
+
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+# set environment variables for teamboard-api
+. /etc/default/teamboard-crypt
+
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+
+	if [ -f $PIDFILE ]; then
+		kill -0 $(<$PIDFILE) > /dev/null 2>&1
+		if [ $? == 0 ]; then
+			echo "already running: "
+			return
+		fi
+	fi
+
+	/usr/local/sbin/daemonize -o $INSTALLATION_FOLDER/teamboard-crypt.log -a -p $PIDFILE -E PORT=$PORT -u teamboard \
+	$DAEMON \
+	|| return 2
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop()
+{
+	if [ -f $PIDFILE ]; then
+		kill -0 $(<$PIDFILE) > /dev/null 2>&1
+		if [ $? == 0 ]; then
+			kill -9 $(<$PIDFILE)
+			rm -f $PIDFILE
+			return
+		fi
+	fi
+	return
+}
+
+#
+# Function that sends a SIGHUP to the daemon/service
+#
+do_reload() {
+	#
+	# If the daemon can reload its configuration without
+	# restarting (for example, when it is sent a SIGHUP),
+	# then implement that here.
+	#
+	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+	return 0
+}
+
+case "$1" in
+  start)
+	do_start
+	;;
+  stop)
+	do_stop
+	;;
+  status)
+	status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+	;;
+  #reload|force-reload)
+	#
+	# If do_reload() is not implemented then leave this commented out
+	# and leave 'force-reload' as an alias for 'restart'.
+	#
+	#log_daemon_msg "Reloading $DESC" "$NAME"
+	#do_reload
+	#log_end_msg $?
+	#;;
+  restart|force-reload)
+	#
+	# If the "reload" option is implemented then remove the
+	# 'force-reload' alias
+	#
+	do_stop
+	case "$?" in
+	  0|1)
+		do_start
+		;;
+	  *)
+		# Failed to stop
+		;;
+	esac
+	;;
+  *)
+	#echo "Usage: $SCRIPTNAME {start|stop|restart|reload|force-reload}" >&2
+	echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+	exit 3
+	;;
+esac
+
+:

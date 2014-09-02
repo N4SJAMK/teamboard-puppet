@@ -1,0 +1,17 @@
+{
+  "name": "n4sjamk-teamboard_mongodb",
+  "version": "1.0.0",
+  "author": "n4sjamk",
+  "summary": "teamboard mongodb",
+  "license": "Apache 2.0",
+  "source": "https://github.com/N4SJAMK/teamboard-mongodb",
+  "project_page": "https://github.com/N4SJAMK/teamboard-mongodb",
+  "issues_url": "",
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}
+

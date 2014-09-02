@@ -1,0 +1,17 @@
+{
+  "name": "n4sjamk-mcollective",
+  "version": "0.1.0",
+  "author": "n4sjamk",
+  "summary": "Installs mcollective to node",
+  "license": "Apache 2.0",
+  "source": "",
+  "project_page": null,
+  "issues_url": null,
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    }
+  ]
+}
+
